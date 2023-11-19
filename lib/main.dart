@@ -23,6 +23,7 @@ class _WebViewAppState extends State<WebViewApp> {
   @override
   void initState() {
     super.initState();
+    const String aplusUrl = "<NGOK URL HERE>";
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setUserAgent("A+Tsukuba-flutter-App")
@@ -35,7 +36,7 @@ class _WebViewAppState extends State<WebViewApp> {
           onPageFinished: (String url) {},
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) async {
-            if (request.url.startsWith('https://www.aplus-tsukuba.net/')) {
+            if (request.url.startsWith(aplusUrl)) {
               return NavigationDecision.navigate;
             } else {
               if (await canLaunchUrlString(request.url)) {
@@ -50,7 +51,7 @@ class _WebViewAppState extends State<WebViewApp> {
         ),
       )
       ..loadRequest(
-        Uri.parse('https://www.aplus-tsukuba.net/'),
+        Uri.parse(aplusUrl),
       );
   }
 
