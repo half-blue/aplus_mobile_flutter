@@ -23,7 +23,7 @@ class _WebViewAppState extends State<WebViewApp> {
   @override
   void initState() {
     super.initState();
-    const String aplusUrl = "<NGOK URL HERE>";
+    const String aplusUrl = "http://10.0.2.2:8000";
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setUserAgent("A+Tsukuba-flutter-App")
@@ -58,9 +58,24 @@ class _WebViewAppState extends State<WebViewApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const EmptyAppBar(),
       body: WebViewWidget(
         controller: controller,
       ),
     );
   }
+}
+
+class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const EmptyAppBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.blue,
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size(0.0, 0.0);
 }
