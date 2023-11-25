@@ -36,7 +36,8 @@ class _WebViewAppState extends State<WebViewApp> {
           onPageFinished: (String url) {},
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) async {
-            if (request.url.startsWith(aplusUrl)) {
+            // URLの中に「twitter.com」か「google.com」が含まれている場合は、WebView内で遷移する
+            if (request.url.startsWith(aplusUrl) || request.url.contains("twitter.com") || request.url.contains("google.com")) {
               return NavigationDecision.navigate;
             } else {
               if (await canLaunchUrlString(request.url)) {
