@@ -36,8 +36,8 @@ class _WebViewAppState extends State<WebViewApp> {
           onPageFinished: (String url) {},
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) async {
-            // allow twitter and google
-            if (request.url.startsWith(aplusUrl) || request.url.contains("twitter.com") || request.url.contains("google.com")) {
+            // allow twitter, google and amazon
+            if (request.url.startsWith(aplusUrl) || request.url.contains("twitter.com") || request.url.contains("google.com") || request.url.contains("amazon.com")) {
               return NavigationDecision.navigate;
             } else {
               if (await canLaunchUrlString(request.url)) {
