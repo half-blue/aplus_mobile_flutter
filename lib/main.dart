@@ -4,6 +4,16 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+const AndroidNotificationChannel foregroundChannel = AndroidNotificationChannel(
+  'aplus_thread_nofitications', // id
+  'フォアグラウンド通知', // title
+  importance: Importance.high,
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +27,12 @@ void main() async {
   } else {
     print("token is null");
   }
+
+  await flutterLocalNotificationsPlugin.initialize(
+    const InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+    ),
+  );
 
   runApp(
     const MaterialApp(
@@ -38,7 +54,7 @@ class _WebViewAppState extends State<WebViewApp> {
   @override
   void initState() {
     super.initState();
-    const String aplusUrl = "https://760a-119-105-84-49.ngrok-free.app/";
+    const String aplusUrl = "https://414e-119-105-84-49.ngrok-free.app/";
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setUserAgent("A+Tsukuba-flutter-App")
@@ -68,6 +84,27 @@ class _WebViewAppState extends State<WebViewApp> {
       ..loadRequest(
         Uri.parse(aplusUrl),
       );
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      final notification = message.notification;
+      final android = message.notification?.android;
+
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              foregroundChannel.id,
+              foregroundChannel.name,
+              channelDescription: foregroundChannel.description,
+            ),
+          ),
+          //後でペイロードの設定をすること
+          //payload: json.encode(message.data),
+        );
+      }
+    });
   }
 
   @override
