@@ -28,9 +28,15 @@ void main() async {
     print("token is null");
   }
 
+  var initializationSettingsIOS = const DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+      );
   await flutterLocalNotificationsPlugin.initialize(
-    const InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+    InitializationSettings(
+      android: const AndroidInitializationSettings('@mipmap/ic_launcher'),
+      iOS: initializationSettingsIOS,
     ),
   );
 
@@ -54,7 +60,7 @@ class _WebViewAppState extends State<WebViewApp> {
   @override
   void initState() {
     super.initState();
-    const String aplusUrl = "https://414e-119-105-84-49.ngrok-free.app/";
+    const String aplusUrl = "https://0037-119-105-84-49.ngrok-free.app/";
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setUserAgent("A+Tsukuba-flutter-App")
