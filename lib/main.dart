@@ -68,7 +68,7 @@ class _WebViewAppState extends State<WebViewApp> {
   @override
   void initState() {
     super.initState();
-    const String aplusUrl = "https://1ddf-119-105-84-49.ngrok-free.app/";
+    const String aplusUrl = "https://36a6-106-185-155-20.ngrok-free.app/";
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setUserAgent("A+Tsukuba-flutter-App")
