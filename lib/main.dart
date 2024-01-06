@@ -64,11 +64,13 @@ class WebViewApp extends StatefulWidget {
 
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
+  String currentUrl = "";
+  bool showButton = false; // ボタンの表示状態を管理する2値の状態変数
 
   @override
   void initState() {
     super.initState();
-    const String aplusUrl = "ゆーあーるえる";
+    const String aplusUrl = "ゆらる";
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setUserAgent("A+Tsukuba-flutter-App")
@@ -78,7 +80,12 @@ class _WebViewAppState extends State<WebViewApp> {
             // Update loading bar.
           },
           onPageStarted: (String url) {},
-          onPageFinished: (String url) {},
+          onPageFinished: (String url) {
+            setState(() {
+              currentUrl = url;
+              showButton = currentUrl.contains("threads"); // URLに'threads'が含まれているかチェック
+            });
+          },
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) async {
             if (request.url.startsWith(aplusUrl)) {
@@ -126,25 +133,27 @@ class _WebViewAppState extends State<WebViewApp> {
     return Scaffold(
       appBar: const EmptyAppBar(),
       body: Stack(
-        children: [
+        children: <Widget>[
           WebViewWidget(
             controller: controller,
           ),
-          Positioned(
-            left: 20, // 左端からの距離
-            bottom: 20, // 下端からの距離
-            child: FloatingActionButton(
-              onPressed: () {
-                // ボタンがタップされたときの動作
-              },
-              child: const Icon(Icons.notifications),
+          if (showButton) // 条件に基づいてボタンを表示
+            Positioned(
+              left: 20,
+              bottom: 20,
+              child: FloatingActionButton(
+                onPressed: () {
+                  // ボタンが押された時の処理
+                },
+                child: const Icon(Icons.notifications),
+              ),
             ),
-          ),
         ],
       ),
     );
   }
 }
+
 
 class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const EmptyAppBar({super.key});
