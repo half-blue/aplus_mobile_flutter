@@ -68,7 +68,7 @@ class _WebViewAppState extends State<WebViewApp> {
   @override
   void initState() {
     super.initState();
-    const String aplusUrl = "https://06a8-106-185-155-20.ngrok-free.app/";
+    const String aplusUrl = "https://36a6-106-185-155-20.ngrok-free.app/";
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setUserAgent("A+Tsukuba-flutter-App")
@@ -125,22 +125,8 @@ class _WebViewAppState extends State<WebViewApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const EmptyAppBar(),
-      body: Stack(
-        children: [
-          WebViewWidget(
-            controller: controller,
-          ),
-          Positioned(
-            left: 20, // 左端からの距離
-            bottom: 20, // 下端からの距離
-            child: FloatingActionButton(
-              onPressed: () {
-                // ボタンがタップされたときの動作
-              },
-              child: Icon(Icons.add), // ボタンのアイコン
-            ),
-          ),
-        ],
+      body: WebViewWidget(
+        controller: controller,
       ),
     );
   }
