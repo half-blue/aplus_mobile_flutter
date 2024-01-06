@@ -137,7 +137,7 @@ class _WebViewAppState extends State<WebViewApp> {
               onPressed: () {
                 // ボタンがタップされたときの動作
               },
-              child: const Icon(Icons.notifications),
+              child: Icon(Icons.add), // ボタンのアイコン
             ),
           ),
         ],
