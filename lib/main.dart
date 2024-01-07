@@ -65,6 +65,8 @@ class WebViewApp extends StatefulWidget {
   State<WebViewApp> createState() => _WebViewAppState();
 }
 
+const String aplusUrl = "https://c582-119-105-84-49.ngrok-free.app/";
+
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
   String currentUrl = "";
@@ -73,7 +75,6 @@ class _WebViewAppState extends State<WebViewApp> {
   @override
   void initState() {
     super.initState();
-    const String aplusUrl = "うるる";
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setUserAgent("A+Tsukuba-flutter-App")
@@ -112,7 +113,6 @@ class _WebViewAppState extends State<WebViewApp> {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       final notification = message.notification;
       final android = message.notification?.android;
-      final ios = message.notification?.apple;
 
       if (notification != null && android != null) {
         flutterLocalNotificationsPlugin.show(
@@ -133,28 +133,18 @@ class _WebViewAppState extends State<WebViewApp> {
       handleNotificationTap(message.data);
     });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      final notification = message.notification;
-      final android = message.notification?.android;
-      final ios = message.notification?.apple;
-
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              foregroundChannel.id,
-              foregroundChannel.name,
-              channelDescription: foregroundChannel.description,
-            ),
-          ),
-          //後でペイロードの設定をすること
-          payload: json.encode(message.data),
-        );
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage? message) {
+      if (message != null) {
+        handleNotificationTap(message.data);
       }
-      handleNotificationTap(message.data);
+    });
+
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
+      if (message != null) {
+        handleNotificationTap(message.data);
+      }
     });
   }
 
@@ -163,7 +153,7 @@ class _WebViewAppState extends State<WebViewApp> {
     final String threadId = payload['threads'] ?? '';
 
     // URLを生成
-    final String targetUrl = 'URL/threads/$threadId';
+    final String targetUrl = '$aplusUrl/threads/$threadId';
 
     // WebViewを指定されたURLにロード
     controller.loadRequest(Uri.parse(targetUrl));
