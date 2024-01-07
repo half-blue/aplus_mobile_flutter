@@ -46,17 +46,17 @@ app.*.map.json
 /android/app/release
 
 # iOS/XCode related
-/ios/Flutter/Debug.xcconfig
-/ios/Flutter/Release.xcconfig
-/ios/Runner.xcodeproj/project.pbxproj
-/ios/Runner.xcworkspace/contents.xcworkspacedata
-/ios/Podfile
-/ios/Podfile.lock
+ios/Flutter/Debug.xcconfig
+ios/Flutter/Release.xcconfig
+ios/Runner.xcodeproj/project.pbxproj
+ios/Runner.xcworkspace/contents.xcworkspacedata
+ios/Podfile
+ios/Podfile.lock
 
 # macOS related
-/macos/Flutter/Flutter-Debug.xcconfig
-/macos/Flutter/Flutter-Release.xcconfig
-/macos/Podfile
+macos/Flutter/Flutter-Debug.xcconfig
+macos/Flutter/Flutter-Release.xcconfig
+macos/Podfile
 
 # Unknown (Windows env generated?)
 linux/flutter/generated_plugin_registrant.cc

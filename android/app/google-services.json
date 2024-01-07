@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "960755529377",
+    "project_id": "mobile-aplus-flutter",
+    "storage_bucket": "mobile-aplus-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960755529377:android:dd26696416b4ebbcab62e0",
+        "android_client_info": {
+          "package_name": "com.example.aplus_mobile_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFEcTmm06qhS3rvROkidGVrfjoRLuWuc4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
