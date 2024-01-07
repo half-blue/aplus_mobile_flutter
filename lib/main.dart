@@ -23,6 +23,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      badge: true, alert: true, sound: true);
   final fcmToken = await FirebaseMessaging.instance.getToken();
   if (fcmToken != null) {
     print("your token is $fcmToken");
@@ -70,7 +72,7 @@ class _WebViewAppState extends State<WebViewApp> {
   @override
   void initState() {
     super.initState();
-    const String aplusUrl = "ゆらる";
+    const String aplusUrl = "うるる";
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setUserAgent("A+Tsukuba-flutter-App")
