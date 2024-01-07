@@ -85,7 +85,8 @@ class _WebViewAppState extends State<WebViewApp> {
           onPageFinished: (String url) {
             setState(() {
               currentUrl = url;
-              showButton = currentUrl.contains("threads"); // URLに'threads'が含まれているかチェック
+              showButton =
+                  currentUrl.contains("threads"); // URLに'threads'が含まれているかチェック
             });
           },
           onWebResourceError: (WebResourceError error) {},
@@ -142,7 +143,7 @@ class _WebViewAppState extends State<WebViewApp> {
           if (showButton) // 条件に基づいてボタンを表示
             Positioned(
               left: 20,
-              bottom: 20,
+              bottom: 25.5,
               child: FloatingActionButton(
                 onPressed: () {
                   // ボタンが押された時の処理
@@ -155,7 +156,6 @@ class _WebViewAppState extends State<WebViewApp> {
     );
   }
 }
-
 
 class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const EmptyAppBar({super.key});
