@@ -66,6 +66,8 @@ class WebViewApp extends StatefulWidget {
 
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
+  String currentUrl = "";
+  bool showButton = false; // ボタンの表示状態を管理する2値の状態変数
 
   @override
   void initState() {
@@ -80,7 +82,13 @@ class _WebViewAppState extends State<WebViewApp> {
             // Update loading bar.
           },
           onPageStarted: (String url) {},
-          onPageFinished: (String url) {},
+          onPageFinished: (String url) {
+            setState(() {
+              currentUrl = url;
+              showButton =
+                  currentUrl.contains("threads"); // URLに'threads'が含まれているかチェック
+            });
+          },
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) async {
             if (request.url.startsWith(aplusUrl)) {
@@ -127,8 +135,23 @@ class _WebViewAppState extends State<WebViewApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const EmptyAppBar(),
-      body: WebViewWidget(
-        controller: controller,
+      body: Stack(
+        children: <Widget>[
+          WebViewWidget(
+            controller: controller,
+          ),
+          if (showButton) // 条件に基づいてボタンを表示
+            Positioned(
+              left: 20,
+              bottom: 25.5,
+              child: FloatingActionButton(
+                onPressed: () {
+                  // ボタンが押された時の処理
+                },
+                child: const Icon(Icons.notifications),
+              ),
+            ),
+        ],
       ),
     );
   }
