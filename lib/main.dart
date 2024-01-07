@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:convert';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -111,6 +112,7 @@ class _WebViewAppState extends State<WebViewApp> {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       final notification = message.notification;
       final android = message.notification?.android;
+      final ios = message.notification?.apple;
 
       if (notification != null && android != null) {
         flutterLocalNotificationsPlugin.show(
@@ -125,10 +127,46 @@ class _WebViewAppState extends State<WebViewApp> {
             ),
           ),
           //後でペイロードの設定をすること
-          //payload: json.encode(message.data),
+          payload: json.encode(message.data),
         );
       }
+      handleNotificationTap(message.data);
     });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      final notification = message.notification;
+      final android = message.notification?.android;
+      final ios = message.notification?.apple;
+
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              foregroundChannel.id,
+              foregroundChannel.name,
+              channelDescription: foregroundChannel.description,
+            ),
+          ),
+          //後でペイロードの設定をすること
+          payload: json.encode(message.data),
+        );
+      }
+      handleNotificationTap(message.data);
+    });
+  }
+
+  void handleNotificationTap(Map<String, dynamic> payload) {
+    // payloadに含まれる値を取得
+    final String threadId = payload['threads'] ?? '';
+
+    // URLを生成
+    final String targetUrl = 'URL/threads/$threadId';
+
+    // WebViewを指定されたURLにロード
+    controller.loadRequest(Uri.parse(targetUrl));
   }
 
   @override
