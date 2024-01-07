@@ -23,6 +23,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(badge: true, alert: true, sound: true);
   final fcmToken = await FirebaseMessaging.instance.getToken();
   if (fcmToken != null) {
     print("your token is $fcmToken");
