@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:convert';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -23,33 +24,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-      badge: true, alert: true, sound: true);
-  final fcmToken = await FirebaseMessaging.instance.getToken();
-  if (fcmToken != null) {
-    print("your token is $fcmToken");
-  } else {
-    print("token is null");
-  }
-  //Androidの場合は通知許可を求める
-  if (Platform.isAndroid) {
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
-  }
-  var initializationSettingsIOS = const DarwinInitializationSettings(
-    requestAlertPermission: true,
-    requestBadgePermission: true,
-    requestSoundPermission: true,
-  );
-  await flutterLocalNotificationsPlugin.initialize(
-    InitializationSettings(
-      android: const AndroidInitializationSettings('@mipmap/ic_launcher'),
-      iOS: initializationSettingsIOS,
-    ),
-  );
-
   runApp(
     const MaterialApp(
       home: WebViewApp(),
@@ -64,15 +38,54 @@ class WebViewApp extends StatefulWidget {
   State<WebViewApp> createState() => _WebViewAppState();
 }
 
+const String aplusUrl = "URL(末尾が/で終わるようにしてください)";
+
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
   String currentUrl = "";
   bool showButton = false; // ボタンの表示状態を管理する2値の状態変数
 
+  void initNotification() async {
+    FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+        badge: true, alert: true, sound: true);
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    if (fcmToken != null) {
+      print("your token is $fcmToken");
+    } else {
+      print("token is null");
+    }
+    //Androidの場合は通知許可を求める
+    if (Platform.isAndroid) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestNotificationsPermission();
+    }
+    var initializationSettingsIOS = const DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+    await flutterLocalNotificationsPlugin.initialize(
+      InitializationSettings(
+        android: const AndroidInitializationSettings('@mipmap/ic_launcher'),
+        iOS: initializationSettingsIOS,
+      ),
+      onDidReceiveNotificationResponse: (notification) async {
+        // 通知をタップした時の処理（フォアグラウンド）
+        final payload = notification.payload;
+        if (payload != null) {
+          final Map<String, dynamic> data = json.decode(payload);
+          handleNotificationTap(data);
+        }
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    const String aplusUrl = "うるる";
+    initNotification();
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setUserAgent("A+Tsukuba-flutter-App")
@@ -108,6 +121,7 @@ class _WebViewAppState extends State<WebViewApp> {
       ..loadRequest(
         Uri.parse(aplusUrl),
       );
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       final notification = message.notification;
       final android = message.notification?.android;
@@ -125,10 +139,38 @@ class _WebViewAppState extends State<WebViewApp> {
             ),
           ),
           //後でペイロードの設定をすること
-          //payload: json.encode(message.data),
+          payload: json.encode(message.data),
         );
       }
     });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage? message) {
+      if (message != null) {
+        handleNotificationTap(message.data);
+      }
+    });
+
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
+      if (message != null) {
+        handleNotificationTap(message.data);
+      }
+    });
+  }
+
+  void handleNotificationTap(Map<String, dynamic> payload) {
+    // payloadに含まれる値を取得
+    final String threadId = payload['thread_id'] ?? '';
+    if (threadId.isEmpty) {
+      return;
+    }
+
+    // URLを生成
+    final String targetUrl = '${aplusUrl}threads/$threadId/';
+
+    // WebViewを指定されたURLにロード
+    controller.loadRequest(Uri.parse(targetUrl));
   }
 
   @override
