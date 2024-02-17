@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:http/http.dart' as http;
 import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -38,7 +39,7 @@ class WebViewApp extends StatefulWidget {
   State<WebViewApp> createState() => _WebViewAppState();
 }
 
-const String aplusUrl = "URL(末尾が/で終わるようにしてください)";
+const String aplusUrl = "https://*.ngrok-free.app/";
 
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
@@ -187,8 +188,37 @@ class _WebViewAppState extends State<WebViewApp> {
               left: 20,
               bottom: 25.5,
               child: FloatingActionButton(
-                onPressed: () {
-                  // ボタンが押された時の処理
+                onPressed: () async {
+                  const url = 'https://*.app/api/thread/4002/subscribe'; // 通知購読のエンドポイント
+                  final fcmToken = await FirebaseMessaging.instance.getToken();
+                  if (fcmToken == null) { // fcmTokenはString?型なのでnullチェックが必要
+                    print('FCM token is null');
+                    return;
+                  }
+
+                  try {
+                    final response = await http.post(
+                      Uri.parse(url),
+                      headers: <String, String>{
+                        'Content-Type': 'application/json; charset=UTF-8',
+                        'X-HALFBLUE-FCM-TOKEN': fcmToken, // FCMトークンをヘッダーに含める
+                      },
+                      body: jsonEncode(<String, String>{
+                        'device_type': 'ios',
+                      }),
+                    );
+
+                    if (response.statusCode == 200) {
+                      // リクエストが成功した場合の処理
+                      print('Subscription successful');
+                    } else {
+                      // サーバーからの応答が200以外の場合のエラー処理
+                      print('Subscription failed: ${response.body}');
+                    }
+                  } catch (e) {
+                    // HTTPリクエスト送信中のエラー処理
+                    print('Error sending subscription request: $e');
+                  }
                 },
                 child: const Icon(Icons.notifications),
               ),
