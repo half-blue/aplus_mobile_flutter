@@ -211,9 +211,9 @@ class _WebViewAppState extends State<WebViewApp> {
 
                   // 購読しているスレッド番号のリストを取得
                   // Key: X-HALFBLUE-FCM-TOKEN, Value: FCMトークン
-                  const String aplusUrl_fcm = "*";
 
-                  final subscriptionUrl = '$aplusUrl_fcm/api/device/subscription';
+                  final subscriptionUrl = '*/api/device/subscription';
+                  print('Subscription URL: $subscriptionUrl');
                   final subscriptionResponse = await http.get(
                     Uri.parse(subscriptionUrl),
                     headers: <String, String>{
@@ -243,7 +243,7 @@ class _WebViewAppState extends State<WebViewApp> {
 
                   if (subscribedThreads.contains(int.parse(threadId))) {
                     // 購読解除処理
-                    final unsubscribeUrl = '$aplusUrl_fcm/api/thread/$threadId/unsubscribe';;
+                    final unsubscribeUrl = '*/api/thread/$threadId/unsubscribe';;
                     final unsubscribeResponse = await http.delete(
                       Uri.parse(unsubscribeUrl),
                       headers: <String, String>{
@@ -259,7 +259,7 @@ class _WebViewAppState extends State<WebViewApp> {
                     }
                   } else {
                     // 購読追加処理
-                    final subscribeUrl = '$aplusUrl_fcm/api/thread/$threadId/subscribe';
+                    final subscribeUrl = '*/api/thread/$threadId/subscribe';
                     final subscribeResponse = await http.post(
                       Uri.parse(subscribeUrl),
                       headers: <String, String>{
