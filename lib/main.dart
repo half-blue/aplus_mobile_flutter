@@ -39,7 +39,7 @@ class WebViewApp extends StatefulWidget {
   State<WebViewApp> createState() => _WebViewAppState();
 }
 
-const String aplusUrl = "https://*.ngrok-free.app/";
+const String aplusUrl = "https://＊.ngrok-free.app/";
 
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
@@ -189,12 +189,23 @@ class _WebViewAppState extends State<WebViewApp> {
               bottom: 25.5,
               child: FloatingActionButton(
                 onPressed: () async {
-                  const url = 'https://*.app/api/thread/4002/subscribe'; // 通知購読のエンドポイント
                   final fcmToken = await FirebaseMessaging.instance.getToken();
                   if (fcmToken == null) { // fcmTokenはString?型なのでnullチェックが必要
                     print('FCM token is null');
                     return;
                   }
+
+                  // 現在表示されているURLからスレッドIDを抽出
+                  final threadIdPattern = RegExp(r'threads/(\d+)');
+                  final match = threadIdPattern.firstMatch(currentUrl);
+                  if (match == null || match.groupCount < 1) {
+                    print('Thread ID not found in the current URL');
+                    return;
+                  }
+                  final threadId = match.group(1);
+
+                  // 抽出したスレッドIDを使用して購読リクエストのURLを構築
+                  final url = 'https://*.ngrok-free.app/api/thread/$threadId/subscribe';
 
                   try {
                     final response = await http.post(
