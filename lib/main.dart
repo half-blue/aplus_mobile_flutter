@@ -39,7 +39,7 @@ class WebViewApp extends StatefulWidget {
   State<WebViewApp> createState() => _WebViewAppState();
 }
 
-const String aplusUrl = "*";
+const String aplusUrl = "*-free.app/";
 
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
@@ -212,7 +212,7 @@ class _WebViewAppState extends State<WebViewApp> {
                   // 購読しているスレッド番号のリストを取得
                   // Key: X-HALFBLUE-FCM-TOKEN, Value: FCMトークン
 
-                  final subscriptionUrl = '*/api/device/subscription';
+                  final subscriptionUrl = '*e.app/api/device/subscription';
                   print('Subscription URL: $subscriptionUrl');
                   final subscriptionResponse = await http.get(
                     Uri.parse(subscriptionUrl),
@@ -243,7 +243,7 @@ class _WebViewAppState extends State<WebViewApp> {
 
                   if (subscribedThreads.contains(int.parse(threadId))) {
                     // 購読解除処理
-                    final unsubscribeUrl = '*/api/thread/$threadId/unsubscribe';;
+                    final unsubscribeUrl = '*e.app/api/thread/$threadId/unsubscribe';;
                     final unsubscribeResponse = await http.delete(
                       Uri.parse(unsubscribeUrl),
                       headers: <String, String>{
@@ -259,7 +259,7 @@ class _WebViewAppState extends State<WebViewApp> {
                     }
                   } else {
                     // 購読追加処理
-                    final subscribeUrl = '*/api/thread/$threadId/subscribe';
+                    final subscribeUrl = '*e.app/api/thread/$threadId/subscribe';
                     final subscribeResponse = await http.post(
                       Uri.parse(subscribeUrl),
                       headers: <String, String>{
@@ -277,39 +277,6 @@ class _WebViewAppState extends State<WebViewApp> {
                       print('Failed to subscribe to thread ID $threadId: ${subscribeResponse.body}');
                     }
                   }
-
-
-
-
-
-
-
-                  // // 抽出したスレッドIDを使用して購読リクエストのURLを構築
-                  // final url = 'https://1d63-106-185-155-20.ngrok-free.app/api/thread/$threadId/subscribe';
-
-                  // try {
-                  //   final response = await http.post(
-                  //     Uri.parse(url),
-                  //     headers: <String, String>{
-                  //       'Content-Type': 'application/json; charset=UTF-8',
-                  //       'X-HALFBLUE-FCM-TOKEN': fcmToken, // FCMトークンをヘッダーに含める
-                  //     },
-                  //     body: jsonEncode(<String, String>{
-                  //       'device_type': 'ios',
-                  //     }),
-                  //   );
-
-                  //   if (response.statusCode == 200) {
-                  //     // リクエストが成功した場合の処理
-                  //     print('Subscription successful');
-                  //   } else {
-                  //     // サーバーからの応答が200以外の場合のエラー処理
-                  //     print('Subscription failed: ${response.body}');
-                  //   }
-                  // } catch (e) {
-                  //   // HTTPリクエスト送信中のエラー処理
-                  //   print('Error sending subscription request: $e');
-                  // }
                 },
                 child: const Icon(Icons.notifications),
               ),
