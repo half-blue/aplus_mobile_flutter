@@ -39,7 +39,7 @@ class WebViewApp extends StatefulWidget {
   State<WebViewApp> createState() => _WebViewAppState();
 }
 
-const String aplusUrl = "https://＊.ngrok-free.app/";
+const String aplusUrl = "*";
 
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
@@ -203,13 +203,65 @@ class _WebViewAppState extends State<WebViewApp> {
                     return;
                   }
                   final threadId = match.group(1);
+                  if (threadId == null) {
+                    print('Thread ID not found in the current URL');
+                    return;
+                  }
+                  print('Thread ID: $threadId');
 
-                  // 抽出したスレッドIDを使用して購読リクエストのURLを構築
-                  final url = 'https://*.ngrok-free.app/api/thread/$threadId/subscribe';
+                  // 購読しているスレッド番号のリストを取得
+                  // Key: X-HALFBLUE-FCM-TOKEN, Value: FCMトークン
+                  const String aplusUrl_fcm = "*";
 
-                  try {
-                    final response = await http.post(
-                      Uri.parse(url),
+                  final subscriptionUrl = '$aplusUrl_fcm/api/device/subscription';
+                  final subscriptionResponse = await http.get(
+                    Uri.parse(subscriptionUrl),
+                    headers: <String, String>{
+                      'Content-Type': 'application/json; charset=UTF-8',
+                      'X-HALFBLUE-FCM-TOKEN': fcmToken, // FCMトークンをヘッダーに含める
+                    },
+                  );
+                  print('Subscription response: ${subscriptionResponse.body}');
+                  // subscriptionResponse.bodyの例:  {"threads":[113,4000,4001,4002,4003,4677]}
+
+                  final subscribedThreads = <int>{};
+                  final subscriptionData = jsonDecode(subscriptionResponse.body);
+                  print('Subscription data: $subscriptionData');
+                  if (subscriptionData is Map<String, dynamic>) {
+                    final threads = subscriptionData['threads'];
+                    if (threads is List<dynamic>) {
+                      for (final thread in threads) {
+                        if (thread is int) {
+                          subscribedThreads.add(thread);
+                        }
+                      }
+                    }
+                  }
+
+                  print('Subscribed threads: $subscribedThreads');
+                  // subscribedThreadsの例: {113, 4000, 4001, 4002, 4003, 4677}
+
+                  if (subscribedThreads.contains(int.parse(threadId))) {
+                    // 購読解除処理
+                    final unsubscribeUrl = '$aplusUrl_fcm/api/thread/$threadId/unsubscribe';;
+                    final unsubscribeResponse = await http.delete(
+                      Uri.parse(unsubscribeUrl),
+                      headers: <String, String>{
+                        'Content-Type': 'application/json; charset=UTF-8',
+                        'X-HALFBLUE-FCM-TOKEN': fcmToken, // FCMトークンをヘッダーに含める
+                      },
+                    );
+                    print('unsubscribeResponse.statusCode: ${unsubscribeResponse.statusCode}');
+                    if (unsubscribeResponse.statusCode == 200) {
+                      print('Unsubscribed successfully from thread ID $threadId');
+                    } else {
+                      print('Failed to unsubscribe from thread ID $threadId: ${unsubscribeResponse.body}');
+                    }
+                  } else {
+                    // 購読追加処理
+                    final subscribeUrl = '$aplusUrl_fcm/api/thread/$threadId/subscribe';
+                    final subscribeResponse = await http.post(
+                      Uri.parse(subscribeUrl),
                       headers: <String, String>{
                         'Content-Type': 'application/json; charset=UTF-8',
                         'X-HALFBLUE-FCM-TOKEN': fcmToken, // FCMトークンをヘッダーに含める
@@ -218,18 +270,46 @@ class _WebViewAppState extends State<WebViewApp> {
                         'device_type': 'ios',
                       }),
                     );
-
-                    if (response.statusCode == 200) {
-                      // リクエストが成功した場合の処理
-                      print('Subscription successful');
+                    print('subscribeResponse.statusCode: ${subscribeResponse.statusCode}');
+                    if (subscribeResponse.statusCode == 201) {
+                      print('Subscribed successfully to thread ID $threadId');
                     } else {
-                      // サーバーからの応答が200以外の場合のエラー処理
-                      print('Subscription failed: ${response.body}');
+                      print('Failed to subscribe to thread ID $threadId: ${subscribeResponse.body}');
                     }
-                  } catch (e) {
-                    // HTTPリクエスト送信中のエラー処理
-                    print('Error sending subscription request: $e');
                   }
+
+
+
+
+
+
+
+                  // // 抽出したスレッドIDを使用して購読リクエストのURLを構築
+                  // final url = 'https://1d63-106-185-155-20.ngrok-free.app/api/thread/$threadId/subscribe';
+
+                  // try {
+                  //   final response = await http.post(
+                  //     Uri.parse(url),
+                  //     headers: <String, String>{
+                  //       'Content-Type': 'application/json; charset=UTF-8',
+                  //       'X-HALFBLUE-FCM-TOKEN': fcmToken, // FCMトークンをヘッダーに含める
+                  //     },
+                  //     body: jsonEncode(<String, String>{
+                  //       'device_type': 'ios',
+                  //     }),
+                  //   );
+
+                  //   if (response.statusCode == 200) {
+                  //     // リクエストが成功した場合の処理
+                  //     print('Subscription successful');
+                  //   } else {
+                  //     // サーバーからの応答が200以外の場合のエラー処理
+                  //     print('Subscription failed: ${response.body}');
+                  //   }
+                  // } catch (e) {
+                  //   // HTTPリクエスト送信中のエラー処理
+                  //   print('Error sending subscription request: $e');
+                  // }
                 },
                 child: const Icon(Icons.notifications),
               ),
