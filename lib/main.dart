@@ -39,7 +39,9 @@ class WebViewApp extends StatefulWidget {
   State<WebViewApp> createState() => _WebViewAppState();
 }
 
-const String aplusUrl = "*-free.app/";
+// DO NOT end with '/'
+const String aplusUrl = "URL (DO NOT end with '/')";
+const String fcmServerUrl = "URL (DO NOT end with '/')";
 
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
@@ -168,7 +170,7 @@ class _WebViewAppState extends State<WebViewApp> {
     }
 
     // URLを生成
-    final String targetUrl = '${aplusUrl}threads/$threadId/';
+    final String targetUrl = '$aplusUrl/threads/$threadId/';
 
     // WebViewを指定されたURLにロード
     controller.loadRequest(Uri.parse(targetUrl));
@@ -190,7 +192,8 @@ class _WebViewAppState extends State<WebViewApp> {
               child: FloatingActionButton(
                 onPressed: () async {
                   final fcmToken = await FirebaseMessaging.instance.getToken();
-                  if (fcmToken == null) { // fcmTokenはString?型なのでnullチェックが必要
+                  if (fcmToken == null) {
+                    // fcmTokenはString?型なのでnullチェックが必要
                     print('FCM token is null');
                     return;
                   }
@@ -212,7 +215,8 @@ class _WebViewAppState extends State<WebViewApp> {
                   // 購読しているスレッド番号のリストを取得
                   // Key: X-HALFBLUE-FCM-TOKEN, Value: FCMトークン
 
-                  final subscriptionUrl = '*e.app/api/device/subscription';
+                  const subscriptionUrl =
+                      '$fcmServerUrl/api/device/subscription';
                   print('Subscription URL: $subscriptionUrl');
                   final subscriptionResponse = await http.get(
                     Uri.parse(subscriptionUrl),
@@ -225,7 +229,8 @@ class _WebViewAppState extends State<WebViewApp> {
                   // subscriptionResponse.bodyの例:  {"threads":[113,4000,4001,4002,4003,4677]}
 
                   final subscribedThreads = <int>{};
-                  final subscriptionData = jsonDecode(subscriptionResponse.body);
+                  final subscriptionData =
+                      jsonDecode(subscriptionResponse.body);
                   print('Subscription data: $subscriptionData');
                   if (subscriptionData is Map<String, dynamic>) {
                     final threads = subscriptionData['threads'];
@@ -243,7 +248,8 @@ class _WebViewAppState extends State<WebViewApp> {
 
                   if (subscribedThreads.contains(int.parse(threadId))) {
                     // 購読解除処理
-                    final unsubscribeUrl = '*e.app/api/thread/$threadId/unsubscribe';;
+                    final unsubscribeUrl =
+                        '$fcmServerUrl/api/thread/$threadId/unsubscribe';
                     final unsubscribeResponse = await http.delete(
                       Uri.parse(unsubscribeUrl),
                       headers: <String, String>{
@@ -251,15 +257,19 @@ class _WebViewAppState extends State<WebViewApp> {
                         'X-HALFBLUE-FCM-TOKEN': fcmToken, // FCMトークンをヘッダーに含める
                       },
                     );
-                    print('unsubscribeResponse.statusCode: ${unsubscribeResponse.statusCode}');
+                    print(
+                        'unsubscribeResponse.statusCode: ${unsubscribeResponse.statusCode}');
                     if (unsubscribeResponse.statusCode == 200) {
-                      print('Unsubscribed successfully from thread ID $threadId');
+                      print(
+                          'Unsubscribed successfully from thread ID $threadId');
                     } else {
-                      print('Failed to unsubscribe from thread ID $threadId: ${unsubscribeResponse.body}');
+                      print(
+                          'Failed to unsubscribe from thread ID $threadId: ${unsubscribeResponse.body}');
                     }
                   } else {
                     // 購読追加処理
-                    final subscribeUrl = '*e.app/api/thread/$threadId/subscribe';
+                    final subscribeUrl =
+                        '$fcmServerUrl/api/thread/$threadId/subscribe';
                     final subscribeResponse = await http.post(
                       Uri.parse(subscribeUrl),
                       headers: <String, String>{
@@ -270,11 +280,13 @@ class _WebViewAppState extends State<WebViewApp> {
                         'device_type': 'ios',
                       }),
                     );
-                    print('subscribeResponse.statusCode: ${subscribeResponse.statusCode}');
+                    print(
+                        'subscribeResponse.statusCode: ${subscribeResponse.statusCode}');
                     if (subscribeResponse.statusCode == 201) {
                       print('Subscribed successfully to thread ID $threadId');
                     } else {
-                      print('Failed to subscribe to thread ID $threadId: ${subscribeResponse.body}');
+                      print(
+                          'Failed to subscribe to thread ID $threadId: ${subscribeResponse.body}');
                     }
                   }
                 },
