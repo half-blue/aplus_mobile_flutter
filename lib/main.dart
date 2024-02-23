@@ -41,7 +41,7 @@ class WebViewApp extends StatefulWidget {
 }
 
 // DO NOT end with '/'
-const String aplusUrl = "https://5e37-133-51-78-29.ngrok-free.app";
+const String aplusUrl = "https://www.aplus-tsukuba.net";
 const String fcmServerUrl = "https://fcm.aplus-tsukuba.net";
 
 class _WebViewAppState extends State<WebViewApp> {
@@ -292,7 +292,7 @@ class _WebViewAppState extends State<WebViewApp> {
                         'X-HALFBLUE-FCM-TOKEN': fcmToken, // FCMトークンをヘッダーに含める
                       },
                       body: jsonEncode(<String, String>{
-                        'device_type': 'ios',
+                        'device_type': Platform.isIOS ? 'ios' : 'android',
                       }),
                     );
                     print(
