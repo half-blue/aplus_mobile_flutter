@@ -9,6 +9,7 @@ import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -40,8 +41,8 @@ class WebViewApp extends StatefulWidget {
 }
 
 // DO NOT end with '/'
-const String aplusUrl = "URL (DO NOT end with '/')";
-const String fcmServerUrl = "URL (DO NOT end with '/')";
+const String aplusUrl = "https://632c-133-51-78-8.ngrok-free.app";
+const String fcmServerUrl = "https://d4d3-133-51-78-8.ngrok-free.app";
 
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
@@ -262,9 +263,11 @@ class _WebViewAppState extends State<WebViewApp> {
                     if (unsubscribeResponse.statusCode == 200) {
                       print(
                           'Unsubscribed successfully from thread ID $threadId');
+                      Fluttertoast.showToast(msg: 'Unsubscribed successfully from thread ID $threadId');
                     } else {
                       print(
                           'Failed to unsubscribe from thread ID $threadId: ${unsubscribeResponse.body}');
+                      Fluttertoast.showToast(msg: 'Failed to unsubscribe from thread ID $threadId');
                     }
                   } else {
                     // 購読追加処理
@@ -284,12 +287,14 @@ class _WebViewAppState extends State<WebViewApp> {
                         'subscribeResponse.statusCode: ${subscribeResponse.statusCode}');
                     if (subscribeResponse.statusCode == 201) {
                       print('Subscribed successfully to thread ID $threadId');
+                      Fluttertoast.showToast(msg: 'Subscribed successfully to thread ID $threadId');
                     } else {
                       print(
                           'Failed to subscribe to thread ID $threadId: ${subscribeResponse.body}');
+                      Fluttertoast.showToast(msg: 'Failed to subscribe to thread ID $threadId');
                     }
                   }
-                },
+                }, // OnPressed
                 child: const Icon(Icons.notifications),
               ),
             ),
