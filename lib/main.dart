@@ -139,6 +139,7 @@ class _WebViewAppState extends State<WebViewApp> {
               foregroundChannel.id,
               foregroundChannel.name,
               channelDescription: foregroundChannel.description,
+              icon: "@drawable/aplus_tsukuba_kari_icon",
             ),
           ),
           //後でペイロードの設定をすること

@@ -13,6 +13,8 @@
         android:label="aplus_mobile_flutter"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon"
+android:resource="@drawable/aplus_tsukuba_kari_icon" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
