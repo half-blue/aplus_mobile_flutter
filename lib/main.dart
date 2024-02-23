@@ -206,6 +206,42 @@ class _WebViewAppState extends State<WebViewApp> {
                     return;
                   }
 
+                  // デバイスがactiveかどうかを確認し，inactiveの場合はactiveにする
+                  const activeUrl =
+                      '$fcmServerUrl/api/device';
+                  final activeResponse = await http.get(
+                    Uri.parse(activeUrl),
+                    headers: <String, String>{
+                      'Content-Type': 'application/json; charset=UTF-8',
+                      'X-HALFBLUE-FCM-TOKEN': fcmToken, // FCMトークンをヘッダーに含める
+                    },
+                  );
+                  print('Active response: ${activeResponse.body}');// 例: {"active":false,"device_type":"ios"}
+                  // activeがtrueならば
+                  if (activeResponse.body.contains('true')) {
+                    // デバイスがactiveの場合は何もしない
+                    print('Device is already active');
+                  } else {
+                    // デバイスがinactiveの場合はactiveにする
+                    print('Device is inactive: $activeUrl/activate');
+                    final activateResponseActivate = await http.patch(
+                      Uri.parse('$activeUrl/activate'),
+                      headers: <String, String>{
+                        'Content-Type': 'application/json; charset=UTF-8',
+                        'X-HALFBLUE-FCM-TOKEN': fcmToken, // FCMトークンをヘッダーに含める
+                      },
+                      // keyが文字列で，valueがbool型のJSONを送信
+                      body: jsonEncode(<String, bool>{
+                        'active': true,
+                      }),
+                    );
+                    print(jsonEncode(<String, String>{
+                        'active': true.toString(),
+                    }));
+                    print('Activate response: ${activateResponseActivate.body}');
+                    // エラーメッセージを表示
+                  }
+
                   // 現在表示されているURLからスレッドIDを抽出
                   final threadIdPattern = RegExp(r'threads/(\d+)');
                   final match = threadIdPattern.firstMatch(currentUrl);
