@@ -26,7 +26,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   final bool quizPassed = prefs.getBool(quizPassedKey) ?? false;
-  
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -58,26 +58,29 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  final TextEditingController _controller = TextEditingController(); // 入力を管理するコントローラ
+  final TextEditingController _controller =
+      TextEditingController(); // 入力を管理するコントローラ
   // クイズの回答をチェックするメソッド
   void checkAnswer() async {
-    if (_controller.text.toUpperCase() == 'ITF') {
+    if (_controller.text.toUpperCase() == 'ITF' ||
+        _controller.text.toUpperCase() == 'ITF.') {
       // 正解の場合、その情報を保存
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(quizPassedKey, true);
       // WebViewAppに遷移
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => WebViewApp()));
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (_) => WebViewApp()));
     } else {
       // 不正解の場合、フィードバックを提供
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('不正解です'),
-          content: Text('正しい答えを入力してください。'),
+          title: const Text('不正解です'),
+          content: const Text('正しい答えを入力してください。'),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('閉じる'),
+              child: const Text('閉じる'),
             ),
           ],
         ),
@@ -89,15 +92,15 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
     // クイズページのUIを構築
     return Scaffold(
-      appBar: AppBar(title: Text('あんた何者？')),
+      appBar: AppBar(title: const Text('筑波大生かどうかの確認')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
               child: Text(
-                '筑波大学といえば？',
+                "このサービスは筑波大生専用のサービスです。\n筑波大生は以下のクイズに解答して先に進んでくさい。\n\n筑波大学を表すアルファベット３文字を入力してください。\n（半角英文字で入力してください。）",
                 textAlign: TextAlign.center,
               ),
             ),
@@ -105,16 +108,16 @@ class _QuizPageState extends State<QuizPage> {
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: TextField(
                 controller: _controller,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: '答えを入力',
                   border: OutlineInputBorder(),
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: checkAnswer, // チェックボタンが押された時の処理
-              child: Text('答えを確認'),
+              child: const Text('答えを確認'),
             ),
           ],
         ),
@@ -130,7 +133,7 @@ class WebViewApp extends StatefulWidget {
   State<WebViewApp> createState() => _WebViewAppState();
 }
 
-const String aplusUrl = "https://9.ngrok-free.app";
+const String aplusUrl = "https://www.aplus-tsukuba.net/";
 
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
