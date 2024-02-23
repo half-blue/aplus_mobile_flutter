@@ -41,8 +41,8 @@ class WebViewApp extends StatefulWidget {
 }
 
 // DO NOT end with '/'
-const String aplusUrl = "https://632c-133-51-78-8.ngrok-free.app";
-const String fcmServerUrl = "https://d4d3-133-51-78-8.ngrok-free.app";
+const String aplusUrl = "https://5e37-133-51-78-29.ngrok-free.app";
+const String fcmServerUrl = "https://efd6-133-51-78-29.ngrok-free.app";
 
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
@@ -168,7 +168,7 @@ class _WebViewAppState extends State<WebViewApp> {
   IconData getNotificationIcon() {
     return isSubscribed ? Icons.notifications_off : Icons.notifications;
   }
-  
+
   void handleNotificationTap(Map<String, dynamic> payload) {
     // payloadに含まれる値を取得
     final String threadId = payload['thread_id'] ?? '';
@@ -276,7 +276,7 @@ class _WebViewAppState extends State<WebViewApp> {
                         backgroundColor: Colors.black,
                         textColor: Colors.white,
                         fontSize: 16.0,
-                        );
+                      );
                     } else {
                       print(
                           'Failed to unsubscribe from thread ID $threadId: ${unsubscribeResponse.body}');
@@ -306,7 +306,7 @@ class _WebViewAppState extends State<WebViewApp> {
                         backgroundColor: Colors.black,
                         textColor: Colors.white,
                         fontSize: 16.0,
-                        );
+                      );
                     } else {
                       print(
                           'Failed to subscribe to thread ID $threadId: ${subscribeResponse.body}');
@@ -320,7 +320,8 @@ class _WebViewAppState extends State<WebViewApp> {
                     });
                   }
                 }, // OnPressed
-                child: Icon(getNotificationIcon()),
+                child: ImageIcon(
+                    AssetImage('assets/images/notification_icon.png')),
               ),
             ),
         ],
