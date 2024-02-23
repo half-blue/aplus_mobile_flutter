@@ -94,7 +94,7 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
     // クイズページのUIを構築
     return Scaffold(
-      appBar: AppBar(title: const Text('筑波大生かどうかの確認')),
+      appBar: AppBar(title: const Text('筑波大生チェック')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
