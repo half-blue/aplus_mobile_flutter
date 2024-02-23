@@ -48,6 +48,7 @@ class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
   String currentUrl = "";
   bool showButton = false; // ボタンの表示状態を管理する2値の状態変数
+  bool isSubscribed = false; // 通知の購読状態を管理する変数
 
   void initNotification() async {
     FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
@@ -163,6 +164,11 @@ class _WebViewAppState extends State<WebViewApp> {
     });
   }
 
+  // 通知の購読状態に基づいて表示するアイコンを決定する関数
+  IconData getNotificationIcon() {
+    return isSubscribed ? Icons.notifications_off : Icons.notifications;
+  }
+  
   void handleNotificationTap(Map<String, dynamic> payload) {
     // payloadに含まれる値を取得
     final String threadId = payload['thread_id'] ?? '';
@@ -263,11 +269,17 @@ class _WebViewAppState extends State<WebViewApp> {
                     if (unsubscribeResponse.statusCode == 200) {
                       print(
                           'Unsubscribed successfully from thread ID $threadId');
-                      Fluttertoast.showToast(msg: 'Unsubscribed successfully from thread ID $threadId');
+                      Fluttertoast.showToast(
+                        msg: '[解除]通知をオフにしました。',
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 2,
+                        backgroundColor: Colors.black,
+                        textColor: Colors.white,
+                        fontSize: 16.0,
+                        );
                     } else {
                       print(
                           'Failed to unsubscribe from thread ID $threadId: ${unsubscribeResponse.body}');
-                      Fluttertoast.showToast(msg: 'Failed to unsubscribe from thread ID $threadId');
                     }
                   } else {
                     // 購読追加処理
@@ -287,15 +299,28 @@ class _WebViewAppState extends State<WebViewApp> {
                         'subscribeResponse.statusCode: ${subscribeResponse.statusCode}');
                     if (subscribeResponse.statusCode == 201) {
                       print('Subscribed successfully to thread ID $threadId');
-                      Fluttertoast.showToast(msg: 'Subscribed successfully to thread ID $threadId');
+                      Fluttertoast.showToast(
+                        msg: '[登録]通知をオンにしました。',
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 2,
+                        backgroundColor: Colors.black,
+                        textColor: Colors.white,
+                        fontSize: 16.0,
+                        );
                     } else {
                       print(
                           'Failed to subscribe to thread ID $threadId: ${subscribeResponse.body}');
-                      Fluttertoast.showToast(msg: 'Failed to subscribe to thread ID $threadId');
                     }
                   }
+                  // isSubscribedの値を更新
+                  if (mounted) {
+                    // 購読追加または解除の処理
+                    setState(() {
+                      isSubscribed = !isSubscribed; // 購読状態を反転
+                    });
+                  }
                 }, // OnPressed
-                child: const Icon(Icons.notifications),
+                child: Icon(getNotificationIcon()),
               ),
             ),
         ],
