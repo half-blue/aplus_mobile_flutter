@@ -197,6 +197,7 @@ class _WebViewAppState extends State<WebViewApp> {
               left: 20,
               bottom: 25.5,
               child: FloatingActionButton(
+                backgroundColor: Color.fromRGBO(0, 123, 255, 1.0),
                 onPressed: () async {
                   final fcmToken = await FirebaseMessaging.instance.getToken();
                   if (fcmToken == null) {
@@ -321,7 +322,10 @@ class _WebViewAppState extends State<WebViewApp> {
                   }
                 }, // OnPressed
                 child: ImageIcon(
-                    AssetImage('assets/images/notification_icon.png')),
+                  AssetImage('assets/images/notification_icon.png'),
+                  size: 48, // Iconのサイズを指定
+                  color: Color.fromRGBO(255, 255, 255, 1.0),
+                ),
               ),
             ),
         ],
