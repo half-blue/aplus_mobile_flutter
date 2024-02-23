@@ -42,7 +42,7 @@ class WebViewApp extends StatefulWidget {
 
 // DO NOT end with '/'
 const String aplusUrl = "https://5e37-133-51-78-29.ngrok-free.app";
-const String fcmServerUrl = "https://efd6-133-51-78-29.ngrok-free.app";
+const String fcmServerUrl = "https://fcm.aplus-tsukuba.net";
 
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
@@ -270,7 +270,7 @@ class _WebViewAppState extends State<WebViewApp> {
                       print(
                           'Unsubscribed successfully from thread ID $threadId');
                       Fluttertoast.showToast(
-                        msg: '[解除]通知をオフにしました。',
+                        msg: 'このスレッドの通知をオフにしました。',
                         gravity: ToastGravity.BOTTOM,
                         timeInSecForIosWeb: 2,
                         backgroundColor: Colors.black,
@@ -300,7 +300,7 @@ class _WebViewAppState extends State<WebViewApp> {
                     if (subscribeResponse.statusCode == 201) {
                       print('Subscribed successfully to thread ID $threadId');
                       Fluttertoast.showToast(
-                        msg: '[登録]通知をオンにしました。',
+                        msg: 'このスレッドの通知をオンにしました。',
                         gravity: ToastGravity.BOTTOM,
                         timeInSecForIosWeb: 2,
                         backgroundColor: Colors.black,
