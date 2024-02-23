@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -18,17 +19,108 @@ const AndroidNotificationChannel foregroundChannel = AndroidNotificationChannel(
   importance: Importance.high,
 );
 
+// クイズの状態を保存/読み込むためのキー
+const String quizPassedKey = 'quizPassed';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final bool quizPassed = prefs.getBool(quizPassedKey) ?? false;
+  
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(
-    const MaterialApp(
-      home: WebViewApp(),
-    ),
-  );
+  runApp(MyApp(quizPassed: quizPassed));
+  // runApp(
+  //   const MaterialApp(
+  //     home: WebViewApp(),
+  //   ),
+  // );
+}
+
+class MyApp extends StatelessWidget {
+  final bool quizPassed;
+
+  const MyApp({Key? key, required this.quizPassed}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: quizPassed ? WebViewApp() : QuizPage(),
+    );
+  }
+}
+
+class QuizPage extends StatefulWidget {
+  @override
+  _QuizPageState createState() => _QuizPageState();
+}
+
+class _QuizPageState extends State<QuizPage> {
+  final TextEditingController _controller = TextEditingController(); // 入力を管理するコントローラ
+  // クイズの回答をチェックするメソッド
+  void checkAnswer() async {
+    if (_controller.text.toUpperCase() == 'ITF') {
+      // 正解の場合、その情報を保存
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(quizPassedKey, true);
+      // WebViewAppに遷移
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => WebViewApp()));
+    } else {
+      // 不正解の場合、フィードバックを提供
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('不正解です'),
+          content: Text('正しい答えを入力してください。'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('閉じる'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // クイズページのUIを構築
+    return Scaffold(
+      appBar: AppBar(title: Text('あんた何者？')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                '筑波大学といえば？',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: TextField(
+                controller: _controller,
+                decoration: InputDecoration(
+                  labelText: '答えを入力',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: checkAnswer, // チェックボタンが押された時の処理
+              child: Text('答えを確認'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class WebViewApp extends StatefulWidget {
@@ -38,7 +130,7 @@ class WebViewApp extends StatefulWidget {
   State<WebViewApp> createState() => _WebViewAppState();
 }
 
-const String aplusUrl = "URL(末尾が/で終わるようにしてください)";
+const String aplusUrl = "https://9.ngrok-free.app";
 
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
