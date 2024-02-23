@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -20,17 +21,111 @@ const AndroidNotificationChannel foregroundChannel = AndroidNotificationChannel(
   importance: Importance.high,
 );
 
+// クイズの状態を保存/読み込むためのキー
+const String quizPassedKey = 'quizPassed';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final bool quizPassed = prefs.getBool(quizPassedKey) ?? false;
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(
-    const MaterialApp(
-      home: WebViewApp(),
-    ),
-  );
+  runApp(MyApp(quizPassed: quizPassed));
+  // runApp(
+  //   const MaterialApp(
+  //     home: WebViewApp(),
+  //   ),
+  // );
+}
+
+class MyApp extends StatelessWidget {
+  final bool quizPassed;
+
+  const MyApp({Key? key, required this.quizPassed}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: quizPassed ? WebViewApp() : QuizPage(),
+    );
+  }
+}
+
+class QuizPage extends StatefulWidget {
+  @override
+  _QuizPageState createState() => _QuizPageState();
+}
+
+class _QuizPageState extends State<QuizPage> {
+  final TextEditingController _controller =
+      TextEditingController(); // 入力を管理するコントローラ
+  // クイズの回答をチェックするメソッド
+  void checkAnswer() async {
+    if (_controller.text.toUpperCase() == 'ITF' ||
+        _controller.text.toUpperCase() == 'ITF.') {
+      // 正解の場合、その情報を保存
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(quizPassedKey, true);
+      // WebViewAppに遷移
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (_) => WebViewApp()));
+    } else {
+      // 不正解の場合、フィードバックを提供
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('不正解です'),
+          content: const Text('正しい答えを入力してください。'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('閉じる'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // クイズページのUIを構築
+    return Scaffold(
+      appBar: AppBar(title: const Text('筑波大生チェック')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                "このサービスは筑波大生専用のサービスです。\n筑波大生は以下のクイズに解答して先に進んでくさい。\n\n筑波大学を表すアルファベット３文字を入力してください。\n（半角英文字で入力してください。）",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: TextField(
+                controller: _controller,
+                decoration: const InputDecoration(
+                  labelText: '答えを入力',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: checkAnswer, // チェックボタンが押された時の処理
+              child: const Text('答えを確認'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class WebViewApp extends StatefulWidget {
@@ -208,8 +303,7 @@ class _WebViewAppState extends State<WebViewApp> {
                   }
 
                   // デバイスがactiveかどうかを確認し，inactiveの場合はactiveにする
-                  const activeUrl =
-                      '$fcmServerUrl/api/device';
+                  const activeUrl = '$fcmServerUrl/api/device';
                   final activeResponse = await http.get(
                     Uri.parse(activeUrl),
                     headers: <String, String>{
@@ -217,7 +311,8 @@ class _WebViewAppState extends State<WebViewApp> {
                       'X-HALFBLUE-FCM-TOKEN': fcmToken, // FCMトークンをヘッダーに含める
                     },
                   );
-                  print('Active response: ${activeResponse.body}');// 例: {"active":false,"device_type":"ios"}
+                  print(
+                      'Active response: ${activeResponse.body}'); // 例: {"active":false,"device_type":"ios"}
                   // activeがtrueならば
                   if (activeResponse.body.contains('true')) {
                     // デバイスがactiveの場合は何もしない
@@ -237,9 +332,10 @@ class _WebViewAppState extends State<WebViewApp> {
                       }),
                     );
                     print(jsonEncode(<String, String>{
-                        'active': true.toString(),
+                      'active': true.toString(),
                     }));
-                    print('Activate response: ${activateResponseActivate.body}');
+                    print(
+                        'Activate response: ${activateResponseActivate.body}');
                     // エラーメッセージを表示
                   }
 

@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  shared_preferences: ^2.0.15
   http: ^0.13.3
   fluttertoast: ^8.2.4
 
