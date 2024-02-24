@@ -50,6 +50,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: quizPassed ? WebViewApp() : QuizPage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -69,6 +70,39 @@ class _QuizPageState extends State<QuizPage> {
       // 正解の場合、その情報を保存
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(quizPassedKey, true);
+      // ITFチェック通過時に新入生スレッドの通知をONにする
+      //Androidの場合は通知許可を求める
+      if (Platform.isAndroid) {
+        await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.requestNotificationsPermission();
+      }
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken == null) {
+        // fcmTokenはString?型なのでnullチェックが必要
+        print('FCM token is null');
+      } else {
+        // 新入生スレッド購読追加処理
+        final subscribeUrl = '$fcmServerUrl/api/thread/6304/subscribe';
+        final subscribeResponse = await http.post(
+          Uri.parse(subscribeUrl),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'X-HALFBLUE-FCM-TOKEN': fcmToken, // FCMトークンをヘッダーに含める
+          },
+          body: jsonEncode(<String, String>{
+            'device_type': Platform.isIOS ? 'ios' : 'android',
+          }),
+        );
+        print('subscribeResponse.statusCode: ${subscribeResponse.statusCode}');
+        if (subscribeResponse.statusCode == 201) {
+          print('Subscribed successfully to thread ID 6304');
+        } else {
+          print(
+              'Failed to subscribe to thread ID 6304: ${subscribeResponse.body}');
+        }
+      }
       // WebViewAppに遷移
       Navigator.of(context)
           .pushReplacement(MaterialPageRoute(builder: (_) => WebViewApp()));
@@ -258,11 +292,6 @@ class _WebViewAppState extends State<WebViewApp> {
         handleNotificationTap(message.data);
       }
     });
-  }
-
-  // 通知の購読状態に基づいて表示するアイコンを決定する関数
-  IconData getNotificationIcon() {
-    return isSubscribed ? Icons.notifications_off : Icons.notifications;
   }
 
   void handleNotificationTap(Map<String, dynamic> payload) {

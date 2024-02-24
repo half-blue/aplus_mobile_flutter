@@ -1,4 +1,4 @@
-package com.example.aplus_mobile_flutter
+package com.aplus.tsukuba2023
 
 import io.flutter.embedding.android.FlutterActivity
 
