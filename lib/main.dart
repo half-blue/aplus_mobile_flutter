@@ -50,6 +50,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: quizPassed ? WebViewApp() : QuizPage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
