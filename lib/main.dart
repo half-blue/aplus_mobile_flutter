@@ -170,9 +170,8 @@ class WebViewApp extends StatefulWidget {
 }
 
 // DO NOT end with '/'
-const String aplusUrl = "https://1e4c-106-185-155-20.ngrok-free.app";
-const String fcmServerUrl = "https://e817-106-185-155-20.ngrok-free.app";
-
+const String aplusUrl = "https://5ca3-10";
+const String fcmServerUrl = "https://5ca3-10";
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
   String currentUrl = "";
@@ -252,26 +251,6 @@ class _WebViewAppState extends State<WebViewApp> {
           },
         ),
       )
-
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageFinished: (String url) async {
-            // URLに'#post_'が含まれている場合、特定の位置にスクロールするJavaScriptを実行
-            if (url.contains('#post_')) {
-              // コメントIDをURLから抽出
-              final postId = url.split('#').last;
-              await controller.runJavaScript("""
-                // 特定のコメントIDにスクロールするJavaScriptコード
-                const commentElement = document.getElementById('${postId}');
-                if (commentElement) {
-                  commentElement.scrollIntoView({behavior: 'smooth'});
-                }
-              """);
-            }
-          },
-        ),
-      )
-
       ..loadRequest(
         Uri.parse(aplusUrl),
       );
@@ -322,11 +301,15 @@ class _WebViewAppState extends State<WebViewApp> {
     }
     final String postId = payload['post_id'] ?? '';
 
+    print('Thread ID******: $threadId');
+    print('Post ID******: $postId');
+
     // URLを生成 postIDをURLのパラメータとして追加
     String targetUrl = '$aplusUrl/threads/$threadId';
     if (postId.isNotEmpty) {
       targetUrl += '?post_id=$postId';
     }
+    print('Target URL: $targetUrl');
     
     // WebViewを指定されたURLにロード
     controller.loadRequest(Uri.parse(targetUrl));
