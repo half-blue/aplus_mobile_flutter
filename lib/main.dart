@@ -303,9 +303,6 @@ class _WebViewAppState extends State<WebViewApp> {
     final String replyId = payload['reply_id'] ?? '';
     final String type = payload['type'] ?? ''; // str of 'post' or 'reply'
 
-    print('Thread ID******: $threadId');
-    print('Post ID******: $postId');
-
     // URLを生成 postIDをURLのパラメータとして追加
     String targetUrl = '$aplusUrl/threads/$threadId';
     if (postId.isNotEmpty) {
@@ -317,7 +314,7 @@ class _WebViewAppState extends State<WebViewApp> {
     if (type.isNotEmpty) {
       targetUrl += '&type=$type';
     }
-    print('Target URL: $targetUrl');
+    // print('Target URL: $targetUrl'); → https://****/.app/threads/6297?post_id=d8c45e6e9a0143569d79abe70bf433c5&reply_id=a0a4e36d5a2f44a2bbe63f00d78c04c5&type=reply
     
     // WebViewを指定されたURLにロード
     controller.loadRequest(Uri.parse(targetUrl));
