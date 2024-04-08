@@ -170,8 +170,8 @@ class WebViewApp extends StatefulWidget {
 }
 
 // DO NOT end with '/'
-const String aplusUrl = "https://5ca3-10";
-const String fcmServerUrl = "https://5ca3-10";
+const String aplusUrl = "https://1ce0-106-185-155-20.ngrok-free.app";
+const String fcmServerUrl = "https://ad5b-106-185-155-20.ngrok-free.app";
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
   String currentUrl = "";
@@ -300,6 +300,8 @@ class _WebViewAppState extends State<WebViewApp> {
       return;
     }
     final String postId = payload['post_id'] ?? '';
+    final String replyId = payload['reply_id'] ?? '';
+    final String type = payload['type'] ?? ''; // str of 'post' or 'reply'
 
     print('Thread ID******: $threadId');
     print('Post ID******: $postId');
@@ -308,6 +310,12 @@ class _WebViewAppState extends State<WebViewApp> {
     String targetUrl = '$aplusUrl/threads/$threadId';
     if (postId.isNotEmpty) {
       targetUrl += '?post_id=$postId';
+    }
+    if (replyId.isNotEmpty) {
+      targetUrl += '&reply_id=$replyId';
+    }
+    if (type.isNotEmpty) {
+      targetUrl += '&type=$type';
     }
     print('Target URL: $targetUrl');
     
