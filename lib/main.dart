@@ -172,6 +172,7 @@ class WebViewApp extends StatefulWidget {
 // DO NOT end with '/'
 const String aplusUrl = "https://www.aplus-tsukuba.net";
 const String fcmServerUrl = "https://fcm.aplus-tsukuba.net";
+
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
   String currentUrl = "";
@@ -304,7 +305,7 @@ class _WebViewAppState extends State<WebViewApp> {
     final String type = payload['type'] ?? ''; // str of 'post' or 'reply'
 
     // スレッドIDまで(pathまで)を含むUriクラス
-    final Uri baseUri = Uri.parse('$aplusUrl/threads/$threadId'); // URIをパース
+    final Uri baseUri = Uri.parse('$aplusUrl/threads/$threadId/'); // URIをパース
 
     // クエリパラメータの追加
     final Map<String, dynamic> queryParameters = {}; // 一応今後のためにdynamic型にしておいた
@@ -312,7 +313,7 @@ class _WebViewAppState extends State<WebViewApp> {
       queryParameters['post_id'] = postId;
     }
     if (replyId.isNotEmpty) {
-    queryParameters['reply_id'] = replyId;
+      queryParameters['reply_id'] = replyId;
     }
     if (type.isNotEmpty) {
       queryParameters['type'] = type;
@@ -320,12 +321,9 @@ class _WebViewAppState extends State<WebViewApp> {
 
     // クエリパラメータを含む最終的なURLを生成
     final Uri targetUri = baseUri.replace(queryParameters: queryParameters);
-    String targetUrl = targetUri.toString();
 
-    // print('Target URL: $targetUrl'); → https://****/.app/threads/6297?post_id=d8c45e6e9a0143569d79abe70bf433c5&reply_id=a0a4e36d5a2f44a2bbe63f00d78c04c5&type=reply
-    
     // WebViewを指定されたURLにロード
-    controller.loadRequest(Uri.parse(targetUrl));
+    controller.loadRequest(targetUri);
   }
 
   @override
