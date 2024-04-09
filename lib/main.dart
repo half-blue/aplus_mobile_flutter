@@ -303,17 +303,25 @@ class _WebViewAppState extends State<WebViewApp> {
     final String replyId = payload['reply_id'] ?? '';
     final String type = payload['type'] ?? ''; // str of 'post' or 'reply'
 
-    // URLを生成 postIDをURLのパラメータとして追加
-    String targetUrl = '$aplusUrl/threads/$threadId/';
+    // スレッドIDまで(pathまで)を含むUriクラス
+    final Uri baseUri = Uri.parse('$aplusUrl/threads/$threadId'); // URIをパース
+
+    // クエリパラメータの追加
+    final Map<String, dynamic> queryParameters = {}; // 一応今後のためにdynamic型にしておいた
     if (postId.isNotEmpty) {
-      targetUrl += '?post_id=$postId';
+      queryParameters['post_id'] = postId;
     }
     if (replyId.isNotEmpty) {
-      targetUrl += '&reply_id=$replyId';
+    queryParameters['reply_id'] = replyId;
     }
     if (type.isNotEmpty) {
-      targetUrl += '&type=$type';
+      queryParameters['type'] = type;
     }
+
+    // クエリパラメータを含む最終的なURLを生成
+    final Uri targetUri = baseUri.replace(queryParameters: queryParameters);
+    String targetUrl = targetUri.toString();
+
     // print('Target URL: $targetUrl'); → https://****/.app/threads/6297?post_id=d8c45e6e9a0143569d79abe70bf433c5&reply_id=a0a4e36d5a2f44a2bbe63f00d78c04c5&type=reply
     
     // WebViewを指定されたURLにロード
