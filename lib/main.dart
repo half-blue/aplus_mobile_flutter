@@ -304,7 +304,7 @@ class _WebViewAppState extends State<WebViewApp> {
     final String type = payload['type'] ?? ''; // str of 'post' or 'reply'
 
     // URLを生成 postIDをURLのパラメータとして追加
-    String targetUrl = '$aplusUrl/threads/$threadId';
+    String targetUrl = '$aplusUrl/threads/$threadId/';
     if (postId.isNotEmpty) {
       targetUrl += '?post_id=$postId';
     }
