@@ -170,8 +170,8 @@ class WebViewApp extends StatefulWidget {
 }
 
 // DO NOT end with '/'
-const String aplusUrl = "https://1ce0-106-185-155-20.ngrok-free.app";
-const String fcmServerUrl = "https://ad5b-106-185-155-20.ngrok-free.app";
+const String aplusUrl = "https://www.aplus-tsukuba.net";
+const String fcmServerUrl = "https://fcm.aplus-tsukuba.net";
 class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
   String currentUrl = "";
