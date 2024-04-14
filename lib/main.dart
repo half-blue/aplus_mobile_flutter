@@ -300,12 +300,30 @@ class _WebViewAppState extends State<WebViewApp> {
     if (threadId.isEmpty) {
       return;
     }
+    final String postId = payload['post_id'] ?? '';
+    final String replyId = payload['reply_id'] ?? '';
+    final String type = payload['type'] ?? ''; // str of 'post' or 'reply'
 
-    // URLを生成
-    final String targetUrl = '$aplusUrl/threads/$threadId/';
+    // スレッドIDまで(pathまで)を含むUriクラス
+    final Uri baseUri = Uri.parse('$aplusUrl/threads/$threadId/'); // URIをパース
+
+    // クエリパラメータの追加
+    final Map<String, dynamic> queryParameters = {}; // 一応今後のためにdynamic型にしておいた
+    if (postId.isNotEmpty) {
+      queryParameters['post_id'] = postId;
+    }
+    if (replyId.isNotEmpty) {
+      queryParameters['reply_id'] = replyId;
+    }
+    if (type.isNotEmpty) {
+      queryParameters['type'] = type;
+    }
+
+    // クエリパラメータを含む最終的なURLを生成
+    final Uri targetUri = baseUri.replace(queryParameters: queryParameters);
 
     // WebViewを指定されたURLにロード
-    controller.loadRequest(Uri.parse(targetUrl));
+    controller.loadRequest(targetUri);
   }
 
   @override
