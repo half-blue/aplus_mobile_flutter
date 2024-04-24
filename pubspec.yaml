@@ -45,6 +45,7 @@ dependencies:
   firebase_analytics: ^10.7.2
   flutter_local_notifications: ^16.2.0
   flutter_launcher_icons: ^0.13.1
+  uni_links: ^0.5.1
 
 dev_dependencies:
   flutter_test:

@@ -11,6 +11,35 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:async';
+import 'package:uni_links/uni_links.dart';
+import 'package:flutter/services.dart';
+
+Future _initURIHandler() async {
+  try {
+    final initialURI = await getInitialUri();
+  } on PlatformException {
+    debugPrint("Failed to receive initial uri");
+  }
+}
+
+StreamSubscription<String?>? _sub;
+
+Future initUniLinks(BuildContext context) async {
+  _sub = linkStream.listen((String? link) {
+    pushDeepLink(context);
+  }, onError: (err) {
+    debugPrint('Error occurred: $err');
+  });
+}
+
+Future pushDeepLink(BuildContext context) async {
+  Navigator.push(context, MaterialPageRoute(
+    builder: (context) {
+      return WebViewApp();
+    },
+  ));
+}
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -220,6 +249,7 @@ class _WebViewAppState extends State<WebViewApp> {
   void initState() {
     super.initState();
     initNotification();
+    initUniLinks(context);
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setUserAgent("A+Tsukuba-flutter-App")
