@@ -11,6 +11,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:app_links/app_links.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -255,6 +256,15 @@ class _WebViewAppState extends State<WebViewApp> {
       ..loadRequest(
         Uri.parse(aplusUrl),
       );
+
+    // AppLinks : https://pub.dev/packages/app_links
+    final _appLinks = AppLinks();
+    // Subscribe to all events when app is started.
+    // (Use allStringLinkStream to get it as [String])
+    _appLinks.allUriLinkStream.listen((uri) {
+      // Do something (navigation, ...)
+      controller.loadRequest(uri);
+    });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       final notification = message.notification;
