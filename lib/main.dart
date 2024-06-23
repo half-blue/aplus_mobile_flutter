@@ -177,6 +177,7 @@ class _WebViewAppState extends State<WebViewApp> {
   late final WebViewController controller;
   String currentUrl = "";
   bool showButton = false; // ボタンの表示状態を管理する2値の状態変数
+  bool showNoticeManagementButton = false; // 通知管理ボタンの表示状態を管理する2値の状態変数
   bool isSubscribed = false; // 通知の購読状態を管理する変数
 
   void initNotification() async {
@@ -234,6 +235,7 @@ class _WebViewAppState extends State<WebViewApp> {
               currentUrl = url;
               showButton =
                   currentUrl.contains("threads"); // URLに'threads'が含まれているかチェック
+              showNoticeManagementButton = currentUrl.contains("search");
             });
           },
           onWebResourceError: (WebResourceError error) {},
@@ -507,6 +509,37 @@ class _WebViewAppState extends State<WebViewApp> {
                   color: Color.fromRGBO(255, 255, 255, 1.0),
                 ),
               ),
+            ),
+          if (showNoticeManagementButton)
+            Positioned(
+              left: 20,
+              bottom: 25.5,
+              child: FloatingActionButton(
+                  backgroundColor: Color.fromRGBO(0, 123, 255, 1.0),
+                  child: Text(
+                    '通知\n管理',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color.fromRGBO(255, 255, 255, 1.0),
+                    ),
+                  ),
+                  onPressed: () async {
+                    final fcmToken =
+                        await FirebaseMessaging.instance.getToken();
+                    if (fcmToken == null) {
+                      // fcmTokenはString?型なのでnullチェックが必要
+                      print('FCM token is null');
+                      return;
+                    }
+                    var url =
+                        '$fcmServerUrl/manage/app_endpoint?token=$fcmToken';
+                    if (await canLaunchUrlString(url)) {
+                      await launchUrlString(
+                        url,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    }
+                  }),
             ),
         ],
       ),
