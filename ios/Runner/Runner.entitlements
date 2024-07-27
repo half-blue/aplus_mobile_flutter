@@ -7,8 +7,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:www.aplus-tsukuba.net</string>
-		<string>applinks:83b4-106-185-155-20.ngrok-free.app</string>
-		<string>webcredentials:83b4-106-185-155-20.ngrok-free.app</string>
+		<string>webcredentials:www.aplus-tsukuba.net</string>
 	</array>
 </dict>
 </plist>
