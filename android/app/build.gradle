@@ -30,7 +30,8 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.aplus.tsukuba2023"
-    compileSdkVersion flutter.compileSdkVersion
+    //compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 34 // The plugin url_launcher_android requires Android SDK version 34.
     ndkVersion flutter.ndkVersion
 
     signingConfigs {
@@ -61,7 +62,8 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 21
-        targetSdkVersion flutter.targetSdkVersion
+        //targetSdkVersion flutter.targetSdkVersion
+        targetSdkVersion 34 // 毎年更新する必要がある
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
