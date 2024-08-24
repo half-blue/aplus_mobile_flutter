@@ -304,36 +304,49 @@ class _WebViewAppState extends State<WebViewApp> {
     });
   }
 
-  void handleNotificationTap(Map<String, dynamic> payload) {
+  void handleNotificationTap(Map<String, dynamic> payload) async {
     // payloadに含まれる値を取得
     final String threadId = payload['thread_id'] ?? '';
-    if (threadId.isEmpty) {
-      return;
+    final bool isAffiliationRedirect =
+        payload['is_affiliation_redirect'] == 'true';
+    print(payload['is_affiliation_redirect']);
+    if (isAffiliationRedirect) {
+      var fcmtoken = await FirebaseMessaging.instance.getToken() ?? 'null';
+      var url =
+          '$fcmServerUrl/manage/app_endpoint?token=$fcmtoken&is_affiliation_redirect=1';
+      if (await canLaunchUrlString(url)) {
+        await launchUrlString(
+          url,
+          mode: LaunchMode.externalApplication,
+        );
+      }
     }
-    final String postId = payload['post_id'] ?? '';
-    final String replyId = payload['reply_id'] ?? '';
-    final String type = payload['type'] ?? ''; // str of 'post' or 'reply'
+    if (!threadId.isEmpty) {
+      final String postId = payload['post_id'] ?? '';
+      final String replyId = payload['reply_id'] ?? '';
+      final String type = payload['type'] ?? ''; // str of 'post' or 'reply'
 
-    // スレッドIDまで(pathまで)を含むUriクラス
-    final Uri baseUri = Uri.parse('$aplusUrl/threads/$threadId/'); // URIをパース
+      // スレッドIDまで(pathまで)を含むUriクラス
+      final Uri baseUri = Uri.parse('$aplusUrl/threads/$threadId/'); // URIをパース
 
-    // クエリパラメータの追加
-    final Map<String, dynamic> queryParameters = {}; // 一応今後のためにdynamic型にしておいた
-    if (postId.isNotEmpty) {
-      queryParameters['post_id'] = postId;
+      // クエリパラメータの追加
+      final Map<String, dynamic> queryParameters = {}; // 一応今後のためにdynamic型にしておいた
+      if (postId.isNotEmpty) {
+        queryParameters['post_id'] = postId;
+      }
+      if (replyId.isNotEmpty) {
+        queryParameters['reply_id'] = replyId;
+      }
+      if (type.isNotEmpty) {
+        queryParameters['type'] = type;
+      }
+
+      // クエリパラメータを含む最終的なURLを生成
+      final Uri targetUri = baseUri.replace(queryParameters: queryParameters);
+
+      // WebViewを指定されたURLにロード
+      controller.loadRequest(targetUri);
     }
-    if (replyId.isNotEmpty) {
-      queryParameters['reply_id'] = replyId;
-    }
-    if (type.isNotEmpty) {
-      queryParameters['type'] = type;
-    }
-
-    // クエリパラメータを含む最終的なURLを生成
-    final Uri targetUri = baseUri.replace(queryParameters: queryParameters);
-
-    // WebViewを指定されたURLにロード
-    controller.loadRequest(targetUri);
   }
 
   @override
