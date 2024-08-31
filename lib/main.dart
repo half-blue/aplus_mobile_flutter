@@ -309,7 +309,6 @@ class _WebViewAppState extends State<WebViewApp> {
     final String threadId = payload['thread_id'] ?? '';
     final bool isAffiliationRedirect =
         payload['is_affiliation_redirect'] == 'true';
-    print(payload['is_affiliation_redirect']);
     if (isAffiliationRedirect) {
       var fcmtoken = await FirebaseMessaging.instance.getToken() ?? 'null';
       var url =
