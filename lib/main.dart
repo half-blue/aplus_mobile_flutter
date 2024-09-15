@@ -515,13 +515,11 @@ class _WebViewAppState extends State<WebViewApp> {
               left: 20,
               bottom: 25.5,
               child: FloatingActionButton(
-                  backgroundColor: Color.fromRGBO(0, 123, 255, 1.0),
-                  child: Text(
-                    '通知\n管理',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Color.fromRGBO(255, 255, 255, 1.0),
-                    ),
+                  backgroundColor: Color.fromRGBO(255, 193, 7, 1.0),
+                  child: ImageIcon(
+                    AssetImage('assets/images/notification_manage_icon.png'),
+                    size: 48, // Iconのサイズを指定
+                    color: Color.fromRGBO(0, 0, 0, 1.0),
                   ),
                   onPressed: () async {
                     final fcmToken =
