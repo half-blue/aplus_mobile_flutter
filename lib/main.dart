@@ -230,7 +230,14 @@ class _WebViewAppState extends State<WebViewApp> {
           onProgress: (int progress) {
             // Update loading bar.
           },
-          onPageStarted: (String url) {},
+          onPageStarted: (String url) {
+            setState(() {
+              currentUrl = url;
+              showButton =
+                  currentUrl.contains("threads"); // URLに'threads'が含まれているかチェック
+              showNoticeManagementButton = currentUrl.contains("search");
+            });
+          },
           onPageFinished: (String url) {
             setState(() {
               currentUrl = url;
