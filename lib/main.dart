@@ -230,8 +230,7 @@ class _WebViewAppState extends State<WebViewApp> {
           onProgress: (int progress) {
             // Update loading bar.
           },
-          onPageStarted: (String url) {},
-          onPageFinished: (String url) {
+          onPageStarted: (String url) {
             setState(() {
               currentUrl = url;
               showButton =
@@ -239,6 +238,7 @@ class _WebViewAppState extends State<WebViewApp> {
               showNoticeManagementButton = currentUrl.contains("search");
             });
           },
+          onPageFinished: (String url) {},
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) async {
             if (request.url.startsWith(aplusUrl)) {
