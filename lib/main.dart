@@ -238,7 +238,14 @@ class _WebViewAppState extends State<WebViewApp> {
               showNoticeManagementButton = currentUrl.contains("search");
             });
           },
-          onPageFinished: (String url) {},
+          onPageFinished: (String url) {
+            setState(() {
+              currentUrl = url;
+              showButton =
+                  currentUrl.contains("threads"); // URLに'threads'が含まれているかチェック
+              showNoticeManagementButton = currentUrl.contains("search");
+            });
+          },
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) async {
             if (request.url.startsWith(aplusUrl)) {
