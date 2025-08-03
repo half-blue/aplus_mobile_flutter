@@ -361,8 +361,12 @@ class _WebViewAppState extends State<WebViewApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const EmptyAppBar(),
-      body: SafeArea(
-        child: Stack(
+      body: Platform.isAndroid ? SafeArea(child: getAppBody()) : getAppBody(),
+    );
+  }
+
+  Widget getAppBody() {
+    return Stack(
         children: <Widget>[
           WebViewWidget(
             controller: controller,
@@ -570,8 +574,7 @@ class _WebViewAppState extends State<WebViewApp> {
                   }),
             ),
         ],
-      ),
-    ));
+    );
   }
 }
 
