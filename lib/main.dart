@@ -270,7 +270,7 @@ class _WebViewAppState extends State<WebViewApp> {
     final _appLinks = AppLinks();
     // Subscribe to all events when app is started.
     // (Use allStringLinkStream to get it as [String])
-    _appLinks.allUriLinkStream.listen((uri) {
+    _appLinks.uriLinkStream.listen((uri) {
       // Do something (navigation, ...)
       controller.loadRequest(uri);
     });
