@@ -31,7 +31,7 @@ if (flutterVersionName == null) {
 android {
     namespace "com.aplus.tsukuba2023"
     //compileSdkVersion flutter.compileSdkVersion
-    compileSdkVersion 35 // The plugin url_launcher_android requires Android SDK version 35. (毎年更新)
+    compileSdkVersion 36 // The plugin url_launcher_android requires Android SDK version 36. (毎年更新)
     ndkVersion android.ndkVersion
 
     signingConfigs {
@@ -62,11 +62,12 @@ android {
         applicationId "com.aplus.tsukuba2023"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 21
+        minSdkVersion flutter.minSdkVersion
         //targetSdkVersion flutter.targetSdkVersion
         targetSdkVersion 35 // 毎年更新する必要がある
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -82,5 +83,6 @@ flutter {
 }
 
 dependencies {
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3' // For AGP 7.4+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5' // Update 2026-01-18 AGP 8.9.1
+    implementation 'androidx.multidex:multidex:2.0.1'
 }
